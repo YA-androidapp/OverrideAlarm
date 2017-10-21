@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="jp.gr.java_conf.ya.overridealarm.OverrideWidgetConfigureActivity"
+    android:initialKeyguardLayout="@layout/override_widget"
+    android:initialLayout="@layout/override_widget"
+    android:minHeight="40dp"
+    android:minWidth="40dp"
+    android:previewImage="@mipmap/ic_launcher"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="86400000"
+    android:widgetCategory="home_screen" /><!-- Copyright (c) 2017 YA<ya.androidapp@gmail.com> All rights reserved. -->
