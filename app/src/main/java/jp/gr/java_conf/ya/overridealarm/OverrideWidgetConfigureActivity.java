@@ -1,19 +1,25 @@
 package jp.gr.java_conf.ya.overridealarm; // Copyright (c) 2017 YA<ya.androidapp@gmail.com> All rights reserved.
 
+import android.Manifest;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * The configuration screen for the {@link OverrideWidget OverrideWidget} AppWidget.
  */
 public class OverrideWidgetConfigureActivity extends Activity {
 
+    private static final int REQUEST_PERMISSION = 1234;
     private static final String PREFS_NAME = "jp.gr.java_conf.ya.overridealarm.OverrideWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
     static final String PREF_PREFIX_KEY_LAT = PREF_PREFIX_KEY + "lat_";
@@ -34,7 +40,7 @@ public class OverrideWidgetConfigureActivity extends Activity {
 
             // It is the responsibility of the configuration activity to update the app widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            OverrideWidget.updateAppWidget(context, appWidgetManager, new int[]{mAppWidgetId});
+            OverrideWidget.updateAppWidget(context, appWidgetManager, new int[]{mAppWidgetId}, new boolean[]{false});
 
             // Make sure we pass back the original appWidgetId
             Intent resultValue = new Intent();
@@ -63,7 +69,7 @@ public class OverrideWidgetConfigureActivity extends Activity {
         if (titleValue != null) {
             return titleValue;
         } else {
-            return context.getString(R.string.appwidget_text);
+            return "";
         }
     }
 
@@ -94,8 +100,36 @@ public class OverrideWidgetConfigureActivity extends Activity {
             return;
         }
 
-        mAppWidgetTextLat.setText(loadTitlePref(OverrideWidgetConfigureActivity.this, mAppWidgetId, PREF_PREFIX_KEY_LAT));
-        mAppWidgetTextLon.setText(loadTitlePref(OverrideWidgetConfigureActivity.this, mAppWidgetId, PREF_PREFIX_KEY_LON));
+        String textLat=loadTitlePref(OverrideWidgetConfigureActivity.this, mAppWidgetId, PREF_PREFIX_KEY_LAT);
+        String textLon=loadTitlePref(OverrideWidgetConfigureActivity.this, mAppWidgetId, PREF_PREFIX_KEY_LON);
+        if (!textLat.equals(""))
+            mAppWidgetTextLat.setText(textLat);
+        if (!textLon.equals(""))
+            mAppWidgetTextLon.setText(textLon);
+
+        checkGpsPermission();
+    }
+
+    private void checkGpsPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, REQUEST_PERMISSION);
+
+            return;
+        }
+    }
+
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_PERMISSION) {
+            // 使用が許可された
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                return;
+            } else {
+                Toast.makeText(this, R.string.denied_gps_permission, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
 

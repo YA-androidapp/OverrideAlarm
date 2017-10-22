@@ -5,15 +5,17 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 public class OverrideBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        ComponentName widget = new ComponentName(context, OverrideWidget.class);
-        int[] appWidgetIds = AppWidgetManager.getInstance(context).getAppWidgetIds(widget);
+        Log.d("overridealarm", "onReceive");
 
+        ComponentName widget = new ComponentName(context, OverrideWidget.class);
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        OverrideWidget.updateAppWidget(context, appWidgetManager, appWidgetIds);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widget);
+        OverrideWidget.updateAppWidget(context, appWidgetManager, appWidgetIds, new boolean[appWidgetIds.length]);
     }
 }
