@@ -18,7 +18,7 @@ public class OverrideWidgetService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        OverrideWidget.setAlarm(this);
+        OverrideWidget.setAlarm(this, true);
         gStarted = true;
         return super.onStartCommand(intent, flags, startId);
     }

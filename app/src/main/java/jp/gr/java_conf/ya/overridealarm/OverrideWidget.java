@@ -14,16 +14,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import static jp.gr.java_conf.ya.overridealarm.OverrideWidgetConfigureActivity.PREF_PREFIX_KEY_LAT;
+
 /**
  * Implementation of App Widget functionality.
  * App Widget Configuration implemented in {@link OverrideWidgetConfigureActivity OverrideWidgetConfigureActivity}
  */
 public class OverrideWidget extends AppWidgetProvider {
     private static AlarmManager am;
-    private static final String BUTTON_CLICK_ACTION = "BUTTON_CLICK_ACTION";
+    private static final String BUTTON_CLICK_ACTION = "jp.gr.java_conf.ya.overridealarm.BUTTON_CLICK_ACTION";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss", Locale.JAPAN);
 
-    static void setAlarm(Context context) {
+    static void setAlarm(Context context, boolean immediately) {
         Intent intentOverrideBroadcastReceiver = new Intent(context, OverrideBroadcastReceiver.class);
         PendingIntent pending = PendingIntent.getBroadcast(context, 0, intentOverrideBroadcastReceiver, 0);
 
@@ -32,7 +34,11 @@ public class OverrideWidget extends AppWidgetProvider {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.MINUTE, 1);
+
+        if (immediately)
+            calendar.add(Calendar.SECOND, 1);
+        else
+            calendar.add(Calendar.MINUTE, 5);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
@@ -46,7 +52,8 @@ public class OverrideWidget extends AppWidgetProvider {
         Date today = new Date();
 
         for (int appWidgetId : appWidgetIds) {
-            CharSequence widgetText = OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
+            CharSequence widgetText = OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, PREF_PREFIX_KEY_LAT)
+                    + "," + OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, PREF_PREFIX_KEY_LAT);
 
             // Construct the RemoteViews object
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.override_widget);
@@ -63,7 +70,7 @@ public class OverrideWidget extends AppWidgetProvider {
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
 
-        setAlarm(context);
+        setAlarm(context, false);
     }
 
     @Override

@@ -21,6 +21,7 @@
         <receiver android:name=".OverrideWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="jp.gr.java_conf.ya.overridealarm.BUTTON_CLICK_ACTION" />
             </intent-filter>
 
             <meta-data

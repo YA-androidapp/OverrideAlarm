@@ -11,11 +11,46 @@
         android:layout_marginBottom="8dp"
         android:text="@string/configure" />
 
-    <EditText
-        android:id="@+id/appwidget_text"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text" />
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/latitude" />
+
+        <EditText
+            android:id="@+id/appwidget_text_lat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="01234567890-."
+            android:text="@string/default_lat"
+            android:inputType="numberDecimal|numberSigned" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/longitude" />
+
+        <EditText
+            android:id="@+id/appwidget_text_lon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="01234567890-."
+            android:text="@string/default_lon"
+            android:inputType="numberDecimal|numberSigned" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/add_button"
