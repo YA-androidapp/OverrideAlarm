@@ -1,4 +1,4 @@
-package jp.gr.java_conf.ya.overridealarm; // Copyright (c) 2017 YA<ya.androidapp@gmail.com> All rights reserved.
+﻿package jp.gr.java_conf.ya.overridealarm; // Copyright (c) 2017 YA<ya.androidapp@gmail.com> All rights reserved.
 
 import android.Manifest;
 import android.app.Activity;
@@ -40,7 +40,7 @@ public class OverrideWidgetConfigureActivity extends Activity {
 
             // It is the responsibility of the configuration activity to update the app widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            OverrideWidget.updateAppWidget(context, appWidgetManager, new int[]{mAppWidgetId}, new boolean[]{false});
+            OverrideWidget.updateAppWidget(context, appWidgetManager, new int[]{mAppWidgetId}, null);
 
             // Make sure we pass back the original appWidgetId
             Intent resultValue = new Intent();

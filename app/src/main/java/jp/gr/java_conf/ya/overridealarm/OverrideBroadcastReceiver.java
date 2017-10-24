@@ -16,6 +16,6 @@ public class OverrideBroadcastReceiver extends BroadcastReceiver {
         ComponentName widget = new ComponentName(context, OverrideWidget.class);
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widget);
-        OverrideWidget.updateAppWidget(context, appWidgetManager, appWidgetIds, new boolean[appWidgetIds.length]);
+        OverrideWidget.updateAppWidget(context, appWidgetManager, appWidgetIds, null);
     }
 }

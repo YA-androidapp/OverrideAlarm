@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">OverrideAlarm</string>
+    <string name="appwidget_text">OverrideAlarm</string>
+    <string name="alert">!!! DETECT !!!</string>
+    <string name="alert_quiescence">!!! DETECT (quiescence) !!!</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="latitude">lat:</string>
+    <string name="longitude">lon:</string>
+    <string name="default_lat">35.7</string>
+    <string name="default_lon">139.77</string>
+    <string name="denied_gps_permission">you need to enable permissions</string>
+</resources>
