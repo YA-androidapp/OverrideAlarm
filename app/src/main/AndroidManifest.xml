@@ -14,7 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity android:name=".OverrideWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
@@ -31,7 +30,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/override_widget_info" />
         </receiver>
-
         <receiver
             android:name=".OverrideBroadcastReceiver"
             android:process=":remote" />
@@ -40,6 +38,20 @@
             android:name=".OverrideWidgetService"
             android:enabled="true"
             android:exported="false" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AlertActivity"
+            android:label="@string/title_activity_alert"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
-</manifest><!-- Copyright (c) 2017 YA<ya.androidapp@gmail.com> All rights reserved. -->
+</manifest> <!-- Copyright (c) 2017 YA<ya.androidapp@gmail.com> All rights reserved. -->
