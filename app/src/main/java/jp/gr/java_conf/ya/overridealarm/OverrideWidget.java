@@ -74,6 +74,7 @@ public class OverrideWidget extends AppWidgetProvider {
 //            if (currentLocation.getSpeed() < 1) { // getSpeed()は、単位[m/sec]
 //                // 歩くより遅い場合はアラート
 //                Toast.makeText(context, R.string.alert_quiescence, Toast.LENGTH_LONG).show();
+//                //TODO
 //            } else
             if (currentDistance < preDistance) {
                 // 前回測位時の距離より近づいていれば、記録を更新
@@ -81,6 +82,7 @@ public class OverrideWidget extends AppWidgetProvider {
             } else {
                 // 前回測位時の距離より遠くなっていたら、アラート
                 Toast.makeText(context, R.string.alert, Toast.LENGTH_LONG).show();
+
             }
 
             // Construct the RemoteViews object

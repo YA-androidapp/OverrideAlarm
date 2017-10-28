@@ -11,6 +11,7 @@
     <string name="default_lon">139.77</string>
     <string name="denied_gps_permission">you need to enable permissions</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="switch_stop">Stop</string>
 
     <!-- Strings related to Settings -->
 
