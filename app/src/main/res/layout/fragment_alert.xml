@@ -10,6 +10,10 @@
         android:id="@+id/switch_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/switch_stop" />
+        android:text="@string/switch_stop"
+        android:layout_marginTop="100dp"
+        android:switchMinWidth="100dp"
+        android:layout_gravity="center"
+        />
 
 </LinearLayout><!-- Copyright (c) 2017 YA<ya.androidapp@gmail.com> All rights reserved. -->

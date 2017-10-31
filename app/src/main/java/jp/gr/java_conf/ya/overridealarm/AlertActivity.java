@@ -1,5 +1,6 @@
 package jp.gr.java_conf.ya.overridealarm; // Copyright (c) 2017 YA<ya.androidapp@gmail.com> All rights reserved.
 
+import android.app.Application;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -8,8 +9,10 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.Toast;
 
 public class AlertActivity extends AppCompatActivity {
     private MediaPlayer mp;
@@ -33,8 +36,8 @@ public class AlertActivity extends AppCompatActivity {
                 if (isChecked) {
                     stopMp();
                     vibStop();
-                } else {
-                    //TODO
+
+                    // AlertActivity.this.finish();
                 }
             }
         });
@@ -44,7 +47,18 @@ public class AlertActivity extends AppCompatActivity {
         playMp(url);
 
         vibStart();
+    }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction()==KeyEvent.ACTION_DOWN) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_BACK:
+                    // disable the back button
+                    return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     private void playMp(String url) {
@@ -55,6 +69,8 @@ public class AlertActivity extends AppCompatActivity {
                 mp.setLooping(true);
                 mp.seekTo(0);
                 mp.start();
+            } else {
+                Toast.makeText(this, R.string.ringtone_not_selected, Toast.LENGTH_LONG).show();
             }
         }
     }

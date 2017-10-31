@@ -3,6 +3,7 @@ package jp.gr.java_conf.ya.overridealarm; // Copyright (c) 2017 YA<ya.androidapp
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -31,6 +32,17 @@ public class OverrideWidgetService extends Service implements LocationListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("overridealarm", "onStartCommand");
+        if (intent != null) {
+            if (intent.getAction() != null) {
+                if (intent.getAction().equals(OverrideWidget.BUTTON_CLICK_ACTION)) {
+                    Log.d("overridealarm", "onReceive BUTTON_CLICK_ACTION");
+                    ComponentName widget = new ComponentName(this, OverrideWidget.class);
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+                    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widget);
+                    OverrideWidget.updateAppWidget(this, appWidgetManager, appWidgetIds, null);
+                }
+            }
+        }
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (locationManager != null)
@@ -42,7 +54,6 @@ public class OverrideWidgetService extends Service implements LocationListener {
             }
 
         gStarted = true;
-
         return super.onStartCommand(intent, flags, startId);
     }
 

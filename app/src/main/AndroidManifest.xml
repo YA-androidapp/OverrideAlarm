@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
@@ -22,24 +22,25 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".OverrideWidget">
+        <receiver
+            android:name=".OverrideWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="jp.gr.java_conf.ya.overridealarm.BUTTON_CLICK_ACTION" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/override_widget_info" />
         </receiver>
-        <receiver
-            android:name=".OverrideBroadcastReceiver"
-            android:process=":remote" />
 
         <service
             android:name=".OverrideWidgetService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false">
+            <intent-filter>
+                <action android:name="BUTTON_CLICK_ACTION" />
+            </intent-filter>
+        </service>
 
         <activity
             android:name=".SettingsActivity"
@@ -53,7 +54,7 @@
         <activity
             android:name=".AlertActivity"
             android:label="@string/title_activity_alert"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest> <!-- Copyright (c) 2017 YA<ya.androidapp@gmail.com> All rights reserved. -->

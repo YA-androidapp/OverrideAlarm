@@ -3,6 +3,7 @@ package jp.gr.java_conf.ya.overridealarm; // Copyright (c) 2017 YA<ya.androidapp
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,23 +12,27 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import static java.lang.Math.round;
 
 /**
  * Implementation of App Widget functionality.
  * App Widget Configuration implemented in {@link OverrideWidgetConfigureActivity OverrideWidgetConfigureActivity}
  */
 public class OverrideWidget extends AppWidgetProvider {
-    private static final String BUTTON_CLICK_ACTION = "jp.gr.java_conf.ya.overridealarm.BUTTON_CLICK_ACTION";
+    private static final DecimalFormat dfDec = new DecimalFormat("0.##");
+    private static final DecimalFormat dfInt = new DecimalFormat("#####");
+
     private static final SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss", Locale.JAPAN);
 
-    private static final String PREFS_NAME_LOC = "jp.gr.java_conf.ya.overridealarm.OverrideWidget.Location";
+    public static final String BUTTON_CLICK_ACTION = "BUTTON_CLICK_ACTION";
     private static final String PREF_PREFIX_KEY_PRE = "appwidget_pre_";
-
-    private static final NumberFormat numberFormat = NumberFormat.getNumberInstance();
+    private static final String PREFS_NAME_LOC = "jp.gr.java_conf.ya.overridealarm.OverrideWidget.Location";
 
     static String loadLocPref(Context context, int appWidgetId, String key) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME_LOC, 0);
@@ -39,6 +44,11 @@ public class OverrideWidget extends AppWidgetProvider {
         }
     }
 
+    static void runAlert(Context context) {
+        Intent i = new Intent(context.getApplicationContext(), AlertActivity.class);
+        context.startActivity(i);
+    }
+
     static void saveLocPref(Context context, int appWidgetId, String key, String text) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME_LOC, 0).edit();
         prefs.putString(key + appWidgetId, text);
@@ -46,43 +56,31 @@ public class OverrideWidget extends AppWidgetProvider {
     }
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds, Location currentLocation) {
-        if (currentLocation == null)
-            return;
-
+        Log.d("overridealarm", "updateAppWidget");
         Date today = new Date();
 
         for (int appWidgetId : appWidgetIds) {
-            // 家までの距離を求める
-            String textLat = OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, OverrideWidgetConfigureActivity.PREF_PREFIX_KEY_LAT);
-            String textLon = OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, OverrideWidgetConfigureActivity.PREF_PREFIX_KEY_LON);
-            double homeLat = Double.parseDouble(textLat);
-            double homeLon = Double.parseDouble(textLon);
-            double currentLat = currentLocation.getLatitude();
-            double currentLon = currentLocation.getLongitude();
-            double currentDistance = CoordsUtil.calcDistHubeny(homeLat, currentLat, homeLon, currentLon);
-            currentDistance = currentDistance > 40000000 ? 40000000 : currentDistance;
+            Log.d("overridealarm", "updateAppWidget " + Integer.toString(appWidgetId));
 
-            CharSequence widgetText
-                    = OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, OverrideWidgetConfigureActivity.PREF_PREFIX_KEY_LAT)
-                    + "," + OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, OverrideWidgetConfigureActivity.PREF_PREFIX_KEY_LON)
-                    + ":" + numberFormat.format(currentDistance);
+            CharSequence widgetText = "";
+            double currentDistance = 40000000;
 
-            // 前回測位時の距離
-            String textPreDistance = loadLocPref(context, appWidgetId, PREF_PREFIX_KEY_PRE);
-            double preDistance = textPreDistance.equals("") ? 40000000 : Double.parseDouble(textPreDistance);
+            if (currentLocation != null) {
+                // 家までの距離を求める
+                String textLat = OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, OverrideWidgetConfigureActivity.PREF_PREFIX_KEY_LAT);
+                String textLon = OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, OverrideWidgetConfigureActivity.PREF_PREFIX_KEY_LON);
+                double homeLat = Double.parseDouble(textLat.equals("")?"0":textLat);
+                double homeLon = Double.parseDouble(textLon.equals("")?"0":textLon);
+                double currentLat = currentLocation.getLatitude();
+                double currentLon = currentLocation.getLongitude();
+                currentDistance = CoordsUtil.calcDistHubeny(homeLat, homeLon, currentLat, currentLon);
+                currentDistance = currentDistance > 40000000 ? 40000000 : currentDistance;
+                String currentDistanceKm = ((1000 > currentDistance) ? dfInt.format(round(currentDistance / 1000)) : dfDec.format(currentDistance / 1000)) + "km";
 
-//            if (currentLocation.getSpeed() < 1) { // getSpeed()は、単位[m/sec]
-//                // 歩くより遅い場合はアラート
-//                Toast.makeText(context, R.string.alert_quiescence, Toast.LENGTH_LONG).show();
-//                //TODO
-//            } else
-            if (currentDistance < preDistance) {
-                // 前回測位時の距離より近づいていれば、記録を更新
-                saveLocPref(context, appWidgetId, PREF_PREFIX_KEY_PRE, Double.toString(currentDistance));
-            } else {
-                // 前回測位時の距離より遠くなっていたら、アラート
-                Toast.makeText(context, R.string.alert, Toast.LENGTH_LONG).show();
-
+                widgetText
+                        = OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, OverrideWidgetConfigureActivity.PREF_PREFIX_KEY_LAT)
+                        + "," + OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, OverrideWidgetConfigureActivity.PREF_PREFIX_KEY_LON)
+                        + ":" + currentDistanceKm;
             }
 
             // Construct the RemoteViews object
@@ -90,7 +88,7 @@ public class OverrideWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.appwidget_button, widgetText + " " + sdf.format(today));
 
             // OnClick event
-            Intent intent = new Intent(context, OverrideWidgetService.class);
+            Intent intent = new Intent(context.getApplicationContext(), OverrideWidgetService.class);
             intent.setAction(BUTTON_CLICK_ACTION);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             PendingIntent pendingIntent = PendingIntent.getService(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -99,6 +97,25 @@ public class OverrideWidget extends AppWidgetProvider {
 
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(appWidgetId, views);
+            Log.d("overridealarm", "updateAppWidget");
+
+            if (currentLocation != null) {
+                // 前回測位時の距離
+                String textPreDistance = loadLocPref(context, appWidgetId, PREF_PREFIX_KEY_PRE);
+                double preDistance = textPreDistance.equals("") ? 40000000 : Double.parseDouble(textPreDistance);
+
+                if (currentLocation.getSpeed() < 1) { // getSpeed()は、単位[m/sec]
+                    //TODO: debug時は静止しているので
+                    // 歩くより遅い場合はアラート
+                    // runAlert(context);
+                } else if (currentDistance < preDistance) {
+                    // 前回測位時の距離より近づいていれば、記録を更新
+                    saveLocPref(context, appWidgetId, PREF_PREFIX_KEY_PRE, Double.toString(currentDistance));
+                } else {
+                    // 前回測位時の距離より遠くなっていたら、アラート
+                    // runAlert(context);
+                }
+            }
         }
     }
 
