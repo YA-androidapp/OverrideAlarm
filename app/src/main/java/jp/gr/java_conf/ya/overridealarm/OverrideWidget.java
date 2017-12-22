@@ -16,6 +16,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import static java.lang.Math.round;
@@ -25,8 +26,12 @@ import static java.lang.Math.round;
  * App Widget Configuration implemented in {@link OverrideWidgetConfigureActivity OverrideWidgetConfigureActivity}
  */
 public class OverrideWidget extends AppWidgetProvider {
+    private static final HashMap<Integer, Boolean> haveArrived = new HashMap<>();
+
     private static final DecimalFormat dfDec = new DecimalFormat("0.##");
     private static final DecimalFormat dfInt = new DecimalFormat("#####");
+
+    private static float revDistance = 2 * 1000; // 2km // 遠ざかった時の閾値
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss", Locale.JAPAN);
 
@@ -62,6 +67,13 @@ public class OverrideWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             Log.d("overridealarm", "updateAppWidget " + Integer.toString(appWidgetId));
 
+            try {
+                if(!haveArrived.get(appWidgetId))
+                    haveArrived.put(appWidgetId, false);
+            }catch(Exception e){
+                haveArrived.put(appWidgetId, false);
+            }
+
             CharSequence widgetText = "";
             double currentDistance = 40000000;
 
@@ -77,10 +89,18 @@ public class OverrideWidget extends AppWidgetProvider {
                 currentDistance = currentDistance > 40000000 ? 40000000 : currentDistance;
                 String currentDistanceKm = ((1000 > currentDistance) ? dfInt.format(round(currentDistance / 1000)) : dfDec.format(currentDistance / 1000)) + "km";
 
+                String messageArrived = "";
+                if (currentDistance < 1000) {
+                    haveArrived.put(appWidgetId, true);
+                    messageArrived = " " + context.getString(R.string.message_arrived);
+                } else if (haveArrived.get(appWidgetId)){
+                    messageArrived = " " + context.getString(R.string.message_havearrived);
+                }
+
                 widgetText
                         = OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, OverrideWidgetConfigureActivity.PREF_PREFIX_KEY_LAT)
                         + "," + OverrideWidgetConfigureActivity.loadTitlePref(context, appWidgetId, OverrideWidgetConfigureActivity.PREF_PREFIX_KEY_LON)
-                        + ":" + currentDistanceKm;
+                        + ":" + currentDistanceKm + messageArrived;
             }
 
             // Construct the RemoteViews object
@@ -104,16 +124,19 @@ public class OverrideWidget extends AppWidgetProvider {
                 String textPreDistance = loadLocPref(context, appWidgetId, PREF_PREFIX_KEY_PRE);
                 double preDistance = textPreDistance.equals("") ? 40000000 : Double.parseDouble(textPreDistance);
 
-                if (currentLocation.getSpeed() < 1) { // getSpeed()は、単位[m/sec]
+                if (haveArrived.get(appWidgetId)) {
+                    // 家に着いたらリセット
+                    saveLocPref(context, appWidgetId, PREF_PREFIX_KEY_PRE, "40000000");
+                // } else if (currentLocation.getSpeed() < 1) { // getSpeed()は、単位[m/sec]
                     //TODO: debug時は静止しているので
                     // 歩くより遅い場合はアラート
                     // runAlert(context);
                 } else if (currentDistance < preDistance) {
                     // 前回測位時の距離より近づいていれば、記録を更新
                     saveLocPref(context, appWidgetId, PREF_PREFIX_KEY_PRE, Double.toString(currentDistance));
-                } else {
-                    // 前回測位時の距離より遠くなっていたら、アラート
-                    // runAlert(context);
+                } else if (currentDistance - preDistance > revDistance) {
+                    // 最接近時の距離から閾値より遠くなっていたら、アラート
+                    runAlert(context);
                 }
             }
         }

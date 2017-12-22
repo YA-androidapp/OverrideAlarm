@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:digits="01234567890-."
-            android:text="@string/default_lat"
+            android:text=""
             android:inputType="numberDecimal|numberSigned" />
     </LinearLayout>
 
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:digits="01234567890-."
-            android:text="@string/default_lon"
+            android:text=""
             android:inputType="numberDecimal|numberSigned" />
     </LinearLayout>
 

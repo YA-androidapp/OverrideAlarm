@@ -1,5 +1,6 @@
 package jp.gr.java_conf.ya.overridealarm; // Copyright (c) 2017 YA <ya.androidapp@gmail.com> All rights reserved.
 
+// メートル単位で出力
 public final class CoordsUtil {
     // Copyright © 2007-2012 やまだらけ http://yamadarake.jp/trdi/report000001.html
     public static final double BESSEL_A = 6377397.155;

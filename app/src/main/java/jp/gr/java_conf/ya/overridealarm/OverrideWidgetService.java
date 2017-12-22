@@ -15,7 +15,7 @@ import android.util.Log;
 
 public class OverrideWidgetService extends Service implements LocationListener { // }, OnNmeaMessageListener {
     private static boolean gStarted = false;
-    private float minDistance = 0; // 0km // 寝込んだ時用
+    private float minDistance = 0; // 0m // 寝込んだ時用
     private long minTime = 0; // 5 * 60 * 1000; // 5min
 
     private LocationManager locationManager;

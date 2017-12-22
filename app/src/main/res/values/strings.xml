@@ -13,6 +13,8 @@
     <string name="title_activity_settings">Settings</string>
     <string name="switch_stop">Stop</string>
     <string name="ringtone_not_selected">Please select your ringtone.</string>
+    <string name="message_arrived">I\'m home!</string>
+
 
     <!-- Strings related to Settings -->
 
