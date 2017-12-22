@@ -14,6 +14,7 @@
     <string name="switch_stop">Stop</string>
     <string name="ringtone_not_selected">Please select your ringtone.</string>
     <string name="message_arrived">I\'m home!</string>
+    <string name="message_havearrived">You\'ve arrived.</string>
 
 
     <!-- Strings related to Settings -->
