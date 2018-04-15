@@ -33,7 +33,7 @@ public class OverrideWidget extends AppWidgetProvider {
 
     private static float revDistance = 2 * 1000; // 2km // 遠ざかった時の閾値
 
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss", Locale.JAPAN);
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.JAPAN);
 
     public static final String BUTTON_CLICK_ACTION = "BUTTON_CLICK_ACTION";
     private static final String PREF_PREFIX_KEY_PRE = "appwidget_pre_";

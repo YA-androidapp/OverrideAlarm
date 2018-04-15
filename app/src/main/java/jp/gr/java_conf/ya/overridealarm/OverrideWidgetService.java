@@ -3,7 +3,6 @@ package jp.gr.java_conf.ya.overridealarm; // Copyright (c) 2017 YA<ya.androidapp
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -13,11 +12,17 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class OverrideWidgetService extends Service implements LocationListener { // }, OnNmeaMessageListener {
+    private static final DecimalFormat df = new DecimalFormat("0.####");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.JAPAN);
     private static boolean gStarted = false;
     private float minDistance = 0; // 0m // 寝込んだ時用
-    private long minTime = 0; // 5 * 60 * 1000; // 5min
-
+    private long minTime = 5 * 60 * 1000; // 5min
     private LocationManager locationManager;
 
     public static boolean isStarted() {
@@ -96,6 +101,25 @@ public class OverrideWidgetService extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         Log.d("overridealarm", "onLocationChanged");
+
+        IoUtil.appendText(
+                sdf.format(new Date(location.getTime()))
+                        + "\t"
+                        + df.format(location.getLatitude())
+                        + ","
+                        + df.format(location.getLongitude())
+                        + "\t"
+                        + df.format(location.getAltitude())
+                        + "\t"
+                        + df.format(location.getSpeed())
+                        + "\t"
+                        + df.format(location.getBearing())
+                        + "\t"
+                        + df.format(location.getAccuracy())
+                        + "\t"
+                        + df.format(location.getElapsedRealtimeNanos())
+                        + "\n"
+        );
 
         ComponentName widget = new ComponentName(this, OverrideWidget.class);
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
